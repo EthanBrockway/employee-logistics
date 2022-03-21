@@ -161,8 +161,6 @@ function addEmployee() {
         ])
         .then((answer) => {
           const { first, last, role, manager } = answer;
-          console.log(role);
-          console.log(manager);
           const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
           const params = [first, last, role, manager];
 
@@ -176,7 +174,45 @@ function addEmployee() {
     });
   });
 }
+function updateEmployee() {
+  db.query("SELECT * FROM employees", (err, employeeResult) => {
+    let employeeNames = [];
+    for (let i = 0; i < employeeResult.length; i++) {
+      employeeNames.push(employeeResult[i].id);
+    }
+    db.query("select * from roles", (err, roleResult) => {
+      let roleList = [];
+      for (i = 0; i < roleResult.length; i++) roleList.push(roleResult[i].id);
+      inquirer
+        .prompt([
+          {
+            type: "list",
+            name: "employeeName",
+            message: "Which Employee would you like to change?",
+            choices: employeeNames,
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "What is the new role for this employee?",
+            choices: roleList,
+          },
+        ])
+        .then((answer) => {
+          const { employeeName, role } = answer;
+          const sql = `UPDATE employees SET role_id = ? WHERE id = ?`;
+          const params = [employeeName, role];
 
+          db.query(sql, params, (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log("Updated Employee!");
+          });
+        });
+    });
+  });
+}
 function createTable(query, param) {
   db.query(query, param, (err, result) => {
     if (err) {
