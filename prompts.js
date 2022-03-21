@@ -15,6 +15,7 @@ function startPrompt() {
         "Add a Role",
         "Add an Employee",
         "Update an Employee Role",
+        "Exit",
       ],
     })
     .then((choice) => {
@@ -37,6 +38,10 @@ function startPrompt() {
         addRole();
       } else if (choice.selectPrompt === "Add an Employee") {
         addEmployee();
+      } else if (choice.selectPrompt === "Update an Employee Role") {
+        updateEmployee();
+      } else if (choice.selectPrompt === "Exit") {
+        return;
       }
     });
 }
