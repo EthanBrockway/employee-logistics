@@ -119,6 +119,64 @@ function addRole() {
   });
 }
 
+function addEmployee() {
+  // get results from query of employees
+  // get results from query of roles
+  // before inserting check if user input = the employee enrolled
+  db.query(`SELECT * FROM employees`, (err, employeeResult) => {
+    let managerList = [];
+    for (let i = 0; i < employeeResult.length; i++) {
+      managerList.push(employeeResult[i].id);
+    }
+    managerList.push("No Manager");
+    db.query("SELECT * FROM roles", (err, roleResult) => {
+      let roleNames = [];
+      for (i = 0; i < roleResult.length; i++) {
+        roleNames.push(roleResult[i].id);
+      }
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "first",
+            message: "What is the employee's first name?",
+          },
+          {
+            type: "input",
+            name: "last",
+            message: "What is the employee's last name?",
+          },
+          {
+            type: "list",
+            name: "role",
+            message: "What is this Employee's Role?",
+            choices: roleNames,
+          },
+          {
+            type: "list",
+            name: "manager",
+            message: "Who is this Employee's Manager?",
+            choices: managerList,
+          },
+        ])
+        .then((answer) => {
+          const { first, last, role, manager } = answer;
+          console.log(role);
+          console.log(manager);
+          const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`;
+          const params = [first, last, role, manager];
+
+          db.query(sql, params, (err, result) => {
+            if (err) {
+              console.log(err);
+            }
+            console.log("Role added!");
+          });
+        });
+    });
+  });
+}
+
 function createTable(query, param) {
   db.query(query, param, (err, result) => {
     if (err) {
