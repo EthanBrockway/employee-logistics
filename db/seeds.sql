@@ -26,13 +26,13 @@ VALUES
 
 INSERT INTO employees (first_name, last_name, role_id, manager_id) 
 VALUES
- ('Patricio', 'O'' Mara', 8, 10),
- ('Elonore', 'Robbel', 6, 7),
+ ('Patricio', 'O'' Mara', 8, NULL),
+ ('Elonore', 'Robbel', 6, 1),
  ('Garreth', 'Sinisbury', 5, 1),
  ('Hernando', 'Luke', 7, 3),
  ('Isaiah', 'Mason', 5, 3),
- ('Chryste', 'Sposito', 3, 10),
+ ('Chryste', 'Sposito', 3, 4),
  ('Melania', 'Chalke', 7, 2),
  ('Amargo', 'Gounod', 6, 4),
- ('Hebert', 'Eteen', 10, 9),
- ('Vernice', 'Hansie', 7, 4);
+ ('Hebert', 'Eteen', 10, 7),
+ ('Vernice', 'Hansie', 7, 8);

@@ -23,7 +23,7 @@ function startPrompt() {
         const sql = `SELECT * FROM departments;`;
         createTable(sql, null);
       } else if (choice.selectPrompt === "View All Roles") {
-        const sql = `SELECT * from roles LEFT JOIN departments ON roles.id=departments.id`;
+        const sql = `SELECT roles.id, roles.title, roles.salary, departments.name AS department_name from roles JOIN departments ON departments.id = roles.department_id`;
         createTable(sql, null);
       } else if (choice.selectPrompt === "View All Employees") {
         const sql = `SELECT a.id, a.first_name, a.last_name, CONCAT(b.first_name, ' ', b.last_name) AS 'manager', roles.title AS 'role', roles.salary AS 'salary', departments.name as 'departments'
@@ -45,7 +45,7 @@ function startPrompt() {
       }
     });
 }
-//
+
 function addDepartment() {
   return inquirer
     .prompt({
@@ -68,6 +68,57 @@ function addDepartment() {
     });
 }
 
+function addRole() {
+  db.query("select * from departments", (err, result) => {
+    if (err) {
+      console.log(err);
+      return Prompt();
+    }
+    let departmentList = [];
+    for (let i = 0; i < result.length; i++) {
+      departmentList.push(result[i].name);
+    }
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "role",
+          message: "What is the new Role?",
+        },
+        {
+          type: "input",
+          name: "salary",
+          message: "What is the salary of this role?",
+        },
+        {
+          type: "list",
+          name: "department",
+          message: "Which Department does this Role belong to?",
+          choices: departmentList,
+        },
+      ])
+      .then((answer) => {
+        const role = answer.role;
+        const salary = answer.salary;
+        const { id } = result.find(
+          (department) =>
+            department.name.toLowerCase() === answer.department.toLowerCase()
+        );
+        const squad = id;
+        let params = [role, salary, squad];
+        const sql = `INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)`;
+
+        db.query(sql, params, (err, result) => {
+          if (err) {
+            console.log(err);
+            return startPrompt();
+          }
+          console.log("Added new role!");
+        });
+      });
+  });
+}
+
 function createTable(query, param) {
   db.query(query, param, (err, result) => {
     if (err) {
@@ -76,4 +127,5 @@ function createTable(query, param) {
     console.table(result);
   });
 }
+
 startPrompt();
